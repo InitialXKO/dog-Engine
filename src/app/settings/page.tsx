@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import { useState, useRef, ChangeEvent, useEffect, Suspense } from 'react'; // 1. 引入 Suspense
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import { generateUUID } from '@/lib/utils';
@@ -237,7 +237,8 @@ function BookSourceForm({ onSave, source, onCancel }: { onSave: (source: BookSou
   );
 }
 
-export default function SettingsPage() {
+// 2. 将原来的 SettingsPage 组件重命名为 SettingsPageContent
+function SettingsPageContent() {
   const [sources, setSources] = useState<BookSource[]>([]);
   const [editingSource, setEditingSource] = useState<BookSource | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -653,4 +654,13 @@ export default function SettingsPage() {
       </Dialog>
     </div>
   );
+}
+
+// 3. 创建新的默认导出组件，用 Suspense 包裹 SettingsPageContent
+export default function SettingsPage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center min-h-screen">加载中...</div>}>
+            <SettingsPageContent />
+        </Suspense>
+    );
 }
